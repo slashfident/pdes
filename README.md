@@ -7,5 +7,7 @@ Available options:
 * o : output file
 * v : print output after each iteration, not just the last
 
+The initial condition is currently hardcoded.
+
 Example output, visualized with MATLAB:
 ![](https://github.com/slashfident/pdes/blob/master/pde_figure.png)
