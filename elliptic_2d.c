@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
                 verbose = 1;
                 break;
             case '?':
-                if (optopt == 'f' || optopt == 'n' || optopt == 'i')
+                if (optopt == 'o' || optopt == 'n' || optopt == 'i')
                     printf("-%c expected argument.\n", optopt);
                 else
                     printf("Unknown option -%c.\n", optopt);
