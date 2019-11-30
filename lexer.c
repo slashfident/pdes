@@ -5,22 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum token_type_e token_type_e;
-enum token_type_e {
-    NUMBER, VARIABLE, OPERATOR, FUNCTION, DERIVATIVE, BRACE
-};
-
-typedef struct token_t token_t;
-struct token_t {
-    token_type_e type;
-    union {
-        float value;
-        char ident;
-        char name[5];
-        size_t order;
-        bool open;
-    };
-};
+#include "interpreter.h"
 
 bool ismathfun(size_t const n, char const str[static restrict n]) {
     return strncmp(str, "sin", 3) || strncmp(str, "cos", 3) || strncmp(str, "exp", 3) || strncmp(str, "log", 3);
@@ -86,7 +71,7 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
         if (isderivative(32, buf)) {
             token_t token;
             token.type = DERIVATIVE;
-            token.order = isderivative(32, buf);
+            token.derivative.order = isderivative(32, buf);
 
             memset(buf, 0, 32);
             bufcurr = 0;
