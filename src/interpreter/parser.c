@@ -29,7 +29,7 @@ token_t * parser(size_t const n, char const expr[static restrict n]) {
             case OPERATOR: {
                 if (top > -1) {
                     token_t t = operators[top];
-                    while ((t.type == FUNCTION || (t.type == OPERATOR && t.oper.precedence >= curr.oper.precedence)) && !(t.type == BRACE && t.open)) {
+                    while ((t.type == FUNCTION || (t.type == OPERATOR && t.precedence >= curr.precedence)) && t.type != LBRACE) {
                         output[tail++] = operators[top--];
                         if (top < 0) break;
                         t = operators[top];
@@ -39,21 +39,23 @@ token_t * parser(size_t const n, char const expr[static restrict n]) {
                 break;
             }
 
-            case BRACE:
-                if (curr.open) {
-                    operators[++top] = curr;
+            case LBRACE: {
+                operators[++top] = curr;
+                break;
+            }
+                
+            case RBRACE: {
+                while (top > -1 && operators[top].type != LBRACE) {
+                    output[tail++] = operators[top--];
+                }
+                if (top > -1 && operators[top].type == LBRACE) {
+                    --top;
                 } else {
-                    while (top > -1 && operators[top].type != BRACE && !operators[top].open) {
-                        output[tail++] = operators[top--];
-                    }
-                    if (top > -1 && operators[top].type == BRACE && operators[top].open) {
-                        --top;
-                    } else {
-                        fprintf(stderr, "Mismatched Parenthesis\n");
-                        return 0;
-                    }
+                    fprintf(stderr, "Mismatched Parenthesis\n");
+                    return 0;
                 }
                 break;
+            }
 
             case EMPTY:
             default:

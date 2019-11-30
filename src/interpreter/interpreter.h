@@ -3,31 +3,22 @@
 
 typedef enum token_type_e token_type_e;
 enum token_type_e {
-    EMPTY = 0, NUMBER, VARIABLE, OPERATOR, FUNCTION, DERIVATIVE, BRACE
+    EMPTY = 0, NUMBER, VARIABLE, OPERATOR, FUNCTION, DERIVATIVE, LBRACE, RBRACE
 };
 
-typedef struct operator_t operator_t;
-struct operator_t {
-    char ident;
-    size_t precedence;
-};
-
-typedef struct derivative_t derivative_t;
-struct derivative_t {
-    char ident;
-    size_t order;
+typedef enum identifier_e identifier_e;
+enum identifier_e {
+    C = 1, X, Y, Z, T, F, DX, DY, DZ, DT, P, MI, MU, D, SIN, COS, EXP, LOG
 };
 
 typedef struct token_t token_t;
 struct token_t {
     token_type_e type;
+    identifier_e ident;
     union {
         float value;
-        char ident;
-        operator_t oper;
-        char name[5];
-        derivative_t derivative;
-        bool open;
+        size_t precedence;
+        size_t order;
     };
 };
 

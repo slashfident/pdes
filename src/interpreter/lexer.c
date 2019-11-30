@@ -7,26 +7,52 @@
 
 #include "interpreter.h"
 
-bool ismathfun(size_t const n, char const str[static restrict n]) {
-    return strncmp(str, "sin", 3) || strncmp(str, "cos", 3) || strncmp(str, "exp", 3) || strncmp(str, "log", 3);
+identifier_e ismathfun(size_t const n, char const str[static restrict n]) {
+    if (!strncmp(str, "sin", 3)) {return SIN;}
+    if (!strncmp(str, "cos", 3)) {return COS;}
+    if (!strncmp(str, "exp", 3)) {return EXP;}
+    if (!strncmp(str, "log", 3)) {return LOG;}
+    return 0;
 }
 
-bool isvar(size_t const n, char const str[static restrict n]) {
-    return str[0] == 'x' || str[0] == 'y' || str[0] == 'z' || str[0] == 't';
+identifier_e isvar(size_t const n, char const str[static restrict n]) {
+    if (str[0] == 'x') {return X;}
+    if (str[0] == 'y') {return Y;}
+    if (str[0] == 'z') {return Z;}
+    if (str[0] == 't') {return T;}
+    return 0;
 }
 
 size_t isderivative(size_t const n, char const str[static restrict n]) {
-    if (str[0] == 'f') return 1;
-    if (str[0] == 'd' && isvar(n - 1, str + 1))
+    if (str[0] == 'f') {return 1;}
+    if (str[0] == 'd' && isvar(n - 1, str + 1)) {
         return 1 + isderivative(n - 2, str + 2);
+    }
+    return 0;
+}
+
+identifier_e derivativeident(size_t const n, char const str[static restrict n]) {
+    if (str[0] == 'f') {return F;}
+    switch (str[1]) {
+        case 'x': {return DX;}
+        case 'y': {return DY;}
+        case 'z': {return DZ;}
+        case 't': {return DT;}
+        default:
+            ;
+    }
     return 0;
 }
 
 size_t isoperator(char const c) {
-    if (c == '+') return 5;
-    if (c == '-') return 5;
-    if (c == '*') return 10;
-    if (c == '/') return 10;
+    if (c == '+') {return 5;}
+    if (c == '-') {return 5;}
+    if (c == '*') {return 10;}
+    if (c == '/') {return 10;}
+    return 0;
+}
+
+identifier_e operatorident(char const c) {
     return 0;
 }
 
@@ -52,7 +78,7 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
         if (isvar(32, buf)) {
             token_t token;
             token.type = VARIABLE;
-            token.ident = buf[0];
+            token.ident = isvar(32, buf);
 
             memset(buf, 0, 32);
             bufcurr = 0;
@@ -63,8 +89,7 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
         if (ismathfun(32, buf)) {
             token_t token;
             token.type = FUNCTION;
-            strncpy(token.name, buf, 4);
-            token.name[4] = 0;
+            token.ident = ismathfun(32, buf);
 
             memset(buf, 0, 32);
             bufcurr = 0;
@@ -75,7 +100,8 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
         if (isderivative(32, buf)) {
             token_t token;
             token.type = DERIVATIVE;
-            token.derivative.order = isderivative(32, buf);
+            token.ident = derivativeident(32, buf);
+            token.order = isderivative(32, buf);
 
             memset(buf, 0, 32);
             bufcurr = 0;
@@ -92,6 +118,7 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
 
         token_t token;
         token.type = NUMBER;
+        token.ident = C;
         token.value = strtof(buf, 0);
 
         memset(buf, 0, 32);
@@ -103,17 +130,26 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
     else if (isoperator(expr[curr])) {
         token_t token;
         token.type = OPERATOR;
-        token.oper.ident = expr[curr];
-        token.oper.precedence = isoperator(expr[curr]);
+        token.ident = operatorident(expr[curr]);
+        token.precedence = isoperator(expr[curr]);
 
         ++curr;
         return token;
     }
 
-    else if (expr[curr] == '(' || expr[curr] == ')') {
+    else if (expr[curr] == '(') {
         token_t token;
-        token.type = BRACE;
-        token.open = expr[curr] == '(';
+        token.type = LBRACE;
+        token.ident = 0;
+        token.order = 0;
+
+        ++curr;
+        return token;
+    } else if (expr[curr] == ')') {
+        token_t token;
+        token.type = RBRACE;
+        token.ident = 0;
+        token.order = 0;
 
         ++curr;
         return token;
