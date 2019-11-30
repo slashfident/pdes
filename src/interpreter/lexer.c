@@ -22,8 +22,12 @@ size_t isderivative(size_t const n, char const str[static restrict n]) {
     return 0;
 }
 
-bool isoperator(char const c) {
-    return c == '+' || c == '-' || c == '*' || c == '/';
+size_t isoperator(char const c) {
+    if (c == '+') return 5;
+    if (c == '-') return 5;
+    if (c == '*') return 10;
+    if (c == '/') return 10;
+    return 0;
 }
 
 /* expects to always be called with the same arguments */
@@ -99,7 +103,8 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
     else if (isoperator(expr[curr])) {
         token_t token;
         token.type = OPERATOR;
-        token.ident = expr[curr];
+        token.oper.ident = expr[curr];
+        token.oper.precedence = isoperator(expr[curr]);
 
         ++curr;
         return token;
