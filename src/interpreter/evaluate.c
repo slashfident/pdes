@@ -20,10 +20,10 @@ float evaluate(size_t const n, token_t const rpn[static restrict n]) {
                 float a = stack[top--];
                 float b = stack[top--];
                 switch (rpn[i].ident) {
-                    case ADD: {stack[++top] = a + b; break;}
-                    case SUB: {stack[++top] = a - b; break;}
-                    case MUL: {stack[++top] = a * b; break;}
-                    case DIV: {stack[++top] = a / b; break;}
+                    case ADD: {stack[++top] = b + a; break;}
+                    case SUB: {stack[++top] = b - a; break;}
+                    case MUL: {stack[++top] = b * a; break;}
+                    case DIV: {stack[++top] = b / a; break;}
                     default: ;
                 }
                 break;
