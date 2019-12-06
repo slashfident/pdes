@@ -62,7 +62,7 @@ void token_pretty_print(token_t t) {
 }
 
 int main(int argc, char ** argv) {
-    char * input = "2*(2-3)";
+    char * input = "2+sin(3.14 + 0.0015)+1";
     token_t * const output = parser(strlen(input), input);
     size_t n = 0;
     for (size_t i = 0; ; ++i) {
