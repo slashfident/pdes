@@ -5,8 +5,7 @@
 #include "interpreter.h"
 
 token_t * parser(size_t const n, char const expr[static restrict n]) {
-    token_t * const output = malloc(n * sizeof *output);
-    memset(output, 0, n * sizeof *output);
+    token_t * const output = calloc(n, sizeof *output);
     size_t tail = 0;
     token_t operators[n];
     memset(operators, 0, n * sizeof *operators);

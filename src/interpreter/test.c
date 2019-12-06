@@ -19,19 +19,19 @@ void token_pretty_print(token_t t) {
             break;
         case OPERATOR:
             switch (t.ident) {
-                case P: {printf("+ "); break;}
-                case MI: {printf("- "); break;}
-                case MU: {printf("* "); break;}
-                case D: {printf("/ "); break;}
+                case ADD: {printf("+ "); break;}
+                case SUB: {printf("- "); break;}
+                case MUL: {printf("* "); break;}
+                case DIV: {printf("/ "); break;}
                 default: ;
             }
             break;
         case FUNCTION:
             switch (t.ident) {
-                case SIN: {printf("sin"); break;}
-                case COS: {printf("cos"); break;}
-                case EXP: {printf("exp"); break;}
-                case LOG: {printf("log"); break;}
+                case SIN: {printf("sin "); break;}
+                case COS: {printf("cos "); break;}
+                case EXP: {printf("exp "); break;}
+                case LOG: {printf("log "); break;}
                 default: ;
             }
             break;
@@ -62,7 +62,7 @@ void token_pretty_print(token_t t) {
 }
 
 int main(int argc, char ** argv) {
-    char * input = "1+(2-3)*4/5";
+    char * input = "1*sin(2+3)";
     token_t * const output = parser(strlen(input), input);
     for (size_t i = 0; i < strlen(input); ++i) {
         token_pretty_print(output[i]);

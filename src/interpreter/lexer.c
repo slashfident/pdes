@@ -53,6 +53,10 @@ size_t isoperator(char const c) {
 }
 
 identifier_e operatorident(char const c) {
+    if (c == '+') {return ADD;}
+    if (c == '-') {return SUB;}
+    if (c == '*') {return MUL;}
+    if (c == '/') {return DIV;}
     return 0;
 }
 
