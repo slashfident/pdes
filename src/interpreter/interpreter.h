@@ -8,7 +8,7 @@ enum token_type_e {
 
 typedef enum identifier_e identifier_e;
 enum identifier_e {
-    C = 1, X, Y, Z, T, F, DX, DY, DZ, DT, P, MI, MU, D, SIN, COS, EXP, LOG
+    C = 1, X, Y, Z, T, F, DX, DY, DZ, DT, ADD, SUB, MUL, DIV, SIN, COS, EXP, LOG
 };
 
 typedef struct token_t token_t;
@@ -22,6 +22,16 @@ struct token_t {
     };
 };
 
+typedef struct ast_node_t ast_t;
+struct ast_node_t {
+    token_t token;
+    ast_t * lchild;
+    ast_t * rchild;
+};
+
 token_t lexer(size_t const n, char const expr[static restrict n]);
 
 token_t * parser(size_t const n, char const expr[static restrict n]);
+
+float evaluate(size_t const n, token_t const rpn[static restrict n]);
+

@@ -62,10 +62,18 @@ void token_pretty_print(token_t t) {
 }
 
 int main(int argc, char ** argv) {
-    char * input = "1*sin(2+3)";
+    char * input = "2*(2+3)";
     token_t * const output = parser(strlen(input), input);
-    for (size_t i = 0; i < strlen(input); ++i) {
+    size_t n = 0;
+    for (size_t i = 0; ; ++i) {
+        if (output[i].type == EMPTY) break;
+        ++n;
+    }
+    for (size_t i = 0; i < n; ++i) {
         token_pretty_print(output[i]);
     }
+    printf("\n");
+    float const result = evaluate(n, output);
+    printf("%f\n", result);
     return 0;
 }
