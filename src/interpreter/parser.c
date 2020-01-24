@@ -10,8 +10,9 @@ token_t * parser(size_t const n, char const expr[static restrict n]) {
     token_t operators[n];
     memset(operators, 0, n * sizeof *operators);
     ptrdiff_t top = -1;
+    lexin_t lexin = {(char *)expr, n, 0};
 
-    for (token_t curr = lexer(n, expr); curr.type; curr = lexer(n, expr)) {
+    for (token_t curr = lexer(&lexin); curr.type; curr = lexer(&lexin)) {
         switch (curr.type) {
             case NUMBER:
             case VARIABLE:

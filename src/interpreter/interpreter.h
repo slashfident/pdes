@@ -22,14 +22,14 @@ struct token_t {
     };
 };
 
-typedef struct ast_node_t ast_t;
-struct ast_node_t {
-    token_t token;
-    ast_t * lchild;
-    ast_t * rchild;
+typedef struct lexin_t lexin_t;
+struct lexin_t {
+    char *str;
+    size_t len;
+    size_t curr;
 };
 
-token_t lexer(size_t const n, char const expr[static restrict n]);
+token_t lexer(lexin_t *input);
 
 token_t * parser(size_t const n, char const expr[static restrict n]);
 

@@ -60,24 +60,22 @@ identifier_e operatorident(char const c) {
     return 0;
 }
 
-/* expects to always be called with the same arguments */
-token_t lexer(size_t const n, char const expr[static restrict n]) {
-    size_t static curr = 0;
-    char static buf[32] = {0};
-    size_t static bufcurr = 0;
+token_t lexer(lexin_t *input) {
+    char buf[32] = {0};
+    size_t bufcurr = 0;
 
-    if (curr == n) return (token_t){0};
+    if (input->curr == input->len) return (token_t){0};
 
-    if (isspace(expr[curr])) {
-        ++curr;
-        return lexer(n, expr);
+    if (isspace(input->str[input->curr])) {
+        ++input->curr;
+        return lexer(input);
     }
 
-    else if (isalpha(expr[curr])) {
+    else if (isalpha(input->str[input->curr])) {
         do {
-            buf[bufcurr++] = expr[curr++];
-            if (curr == n) break;
-        } while (isalpha(expr[curr]));
+            buf[bufcurr++] = input->str[input->curr++];
+            if (input->curr == input->len) break;
+        } while (isalpha(input->str[input->curr]));
 
         if (isvar(32, buf)) {
             token_t token;
@@ -85,8 +83,6 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
             token.ident = isvar(32, buf);
 
             memset(buf, 0, 32);
-            bufcurr = 0;
-
             return token;
         }
 
@@ -96,8 +92,6 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
             token.ident = ismathfun(32, buf);
 
             memset(buf, 0, 32);
-            bufcurr = 0;
-
             return token;
         }
 
@@ -108,17 +102,15 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
             token.order = isderivative(32, buf);
 
             memset(buf, 0, 32);
-            bufcurr = 0;
-
             return token;
         }
     }
 
-    else if (isdigit(expr[curr])) {
+    else if (isdigit(input->str[input->curr])) {
         do {
-            buf[bufcurr++] = expr[curr++];
-            if (curr == n) break;
-        } while (isdigit(expr[curr]) || expr[curr] == '.');
+            buf[bufcurr++] = input->str[input->curr++];
+            if (input->curr == input->len) break;
+        } while (isdigit(input->str[input->curr]) || input->str[input->curr] == '.');
 
         token_t token;
         token.type = NUMBER;
@@ -126,36 +118,34 @@ token_t lexer(size_t const n, char const expr[static restrict n]) {
         token.value = strtof(buf, 0);
 
         memset(buf, 0, 32);
-        bufcurr = 0;
-
         return token;
     }
 
-    else if (isoperator(expr[curr])) {
+    else if (isoperator(input->str[input->curr])) {
         token_t token;
         token.type = OPERATOR;
-        token.ident = operatorident(expr[curr]);
-        token.precedence = isoperator(expr[curr]);
+        token.ident = operatorident(input->str[input->curr]);
+        token.precedence = isoperator(input->str[input->curr]);
 
-        ++curr;
+        ++input->curr;
         return token;
     }
 
-    else if (expr[curr] == '(') {
+    else if (input->str[input->curr] == '(') {
         token_t token;
         token.type = LBRACE;
         token.ident = 0;
         token.order = 0;
 
-        ++curr;
+        ++input->curr;
         return token;
-    } else if (expr[curr] == ')') {
+    } else if (input->str[input->curr] == ')') {
         token_t token;
         token.type = RBRACE;
         token.ident = 0;
         token.order = 0;
 
-        ++curr;
+        ++input->curr;
         return token;
     }
 
